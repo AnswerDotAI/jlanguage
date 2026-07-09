@@ -18,6 +18,9 @@ def test_build_wheel(tmp_path):
         assert f'Tag: py3-none-manylinux_2_34_x86_64' in z.read(f'{di}/WHEEL').decode()
         md = z.read(f'{di}/METADATA').decode()
         assert 'Name: jlanguage' in md and f'Version: {mw.JVER}' in md
+        assert 'Home-page: https://github.com/AnswerDotAI/jlanguage' in md
+        assert 'Project-URL: Documentation, https://code.jsoftware.com/wiki' in md
+        assert 'Project-URL: Source, https://github.com/AnswerDotAI/jlanguage' in md
         assert 'jconsole = jlang:main' in z.read(f'{di}/entry_points.txt').decode()
         init = z.read('jlang/__init__.py').decode()
         assert mw.JVER in init and 'def main' in init

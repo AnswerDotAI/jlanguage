@@ -42,7 +42,10 @@ def metadata():
 Name: {DIST}
 Version: {JVER}
 Summary: The J programming language, repackaged from official jsoftware.com binaries
-Home-page: https://www.jsoftware.com
+Home-page: https://github.com/AnswerDotAI/jlanguage
+Project-URL: Documentation, https://code.jsoftware.com/wiki
+Project-URL: Source, https://github.com/AnswerDotAI/jlanguage
+Project-URL: J home page, https://www.jsoftware.com
 Author: Jsoftware Inc.
 License: GPL-3.0-or-later
 Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
