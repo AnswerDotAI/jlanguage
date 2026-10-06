@@ -61,6 +61,6 @@ J is © Jsoftware Inc. and distributed under the GPLv3 (see [jsoftware/jsource]
 When Jsoftware publishes a new J release:
 
 1.  Set `version` in `pyproject.toml` to the new J version followed by `.1`, such as `9.7.2.1`. `tools/fetch_j.py` derives the download URL from it. Check the archive names against [the install dir](https://www.jsoftware.com/download/), because the suffixes have changed between releases (9.6.3 used `linux64`, 9.7.1 uses `linux`).
-2.  Push a `v*` tag. CI builds a wheel for each platform and publishes them.
+2.  Commit and push the changes, then run `ship-release`. CI builds and publishes the five platform wheels.
 
-For another release of the same J version, increase the fourth number.
+`ship-release` tags the version in `pyproject.toml` and bumps the fourth number afterwards. For another release of the same J version, keep the first three numbers and run `ship-release` again.

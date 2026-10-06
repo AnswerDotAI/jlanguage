@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = ["fastws-cli>=0.0.22", "nbdev>=3.3.24", "ipython", "pytest", "conkernelclient>=0.0.23", "build", "wheel"]
+dev = ["fastship>=0.1.9", "nbdev>=3.3.24", "ipython", "pytest", "conkernelclient>=0.0.23", "build", "wheel"]
 
 [project.scripts]
 jconsole = "jlang:main"
@@ -46,3 +46,6 @@ addopts = "-q"
 [tool.nbdev]
 lib_path = "python/jlang"
 put_version_in_init = false
+
+[tool.fastship]
+release = "tag"
