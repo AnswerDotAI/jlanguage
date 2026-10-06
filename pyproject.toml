@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jlanguage"
-version = "9.7.1.1"
+version = "9.7.1.2"
 description = "The J programming language, with J sessions, IPython magics and a Jupyter kernel for Python."
 readme = "README.md"
 requires-python = ">=3.11"
