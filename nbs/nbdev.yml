@@ -1,0 +1,14 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "jlanguage"
+  site-url: "https://answerdotai.github.io/jlanguage"
+  description: "The J programming language, with J sessions, IPython magics and a Jupyter kernel for Python."
+  repo-branch: main
+  repo-url: "https://github.com/AnswerDotAI/jlanguage"
+
+format-links:
+  - html
+  - format: commonmark
+    text: Markdown

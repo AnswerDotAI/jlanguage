@@ -3,3 +3,9 @@ downloads/
 dist/
 tags
 jsource/
+build/
+meta/
+_docs/
+_proc/
+*.egg-info/
+python/jlang/j/

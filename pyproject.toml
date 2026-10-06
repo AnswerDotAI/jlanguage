@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jlanguage"
+version = "9.7.1.1"
+description = "The J programming language, with J sessions, IPython magics and a Jupyter kernel for Python."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["fastcore", "kernmini>=0.1.19"]
+license = "GPL-3.0-or-later"
+authors = [{name = "Jeremy Howard", email = "github@jhoward.fastmail.fm"}]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Other",
+    "Framework :: Jupyter",
+]
+
+[project.optional-dependencies]
+dev = ["fastws-cli>=0.0.22", "nbdev>=3.3.24", "ipython", "pytest", "conkernelclient>=0.0.23", "build", "wheel"]
+
+[project.scripts]
+jconsole = "jlang:main"
+
+[project.urls]
+Homepage = "https://github.com/AnswerDotAI/jlanguage"
+Repository = "https://github.com/AnswerDotAI/jlanguage"
+Issues = "https://github.com/AnswerDotAI/jlanguage/issues"
+Documentation = "https://answerdotai.github.io/jlanguage"
+"J home page" = "https://www.jsoftware.com"
+"J wiki" = "https://code.jsoftware.com/wiki"
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+packages = ["jlang"]
+include-package-data = false
+
+[tool.setuptools.data-files]
+"share/jupyter/kernels/j" = ["wheel/data/share/jupyter/kernels/j/kernel.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.nbdev]
+lib_path = "python/jlang"
+put_version_in_init = false

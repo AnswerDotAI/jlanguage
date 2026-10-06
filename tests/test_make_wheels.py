@@ -1,28 +1,29 @@
-import zipfile
+from email import message_from_bytes
+import fetch_j, make_wheels
+from build import ProjectBuilder
 from pathlib import Path
-import make_wheels as mw
+from wheel.wheelfile import WheelFile
 
-def test_build_wheel(tmp_path):
-    whl = mw.build_wheel(Path('downloads/j9.7.1_linux.tar.gz'), 'manylinux_2_34_x86_64', tmp_path)
-    assert whl.name == f'jlanguage-{mw.JVER}-py3-none-manylinux_2_34_x86_64.whl'
-    with zipfile.ZipFile(whl) as z:
-        names = z.namelist()
-        di = f'jlanguage-{mw.JVER}.dist-info'
-        for n in ['jlang/__init__.py','jlang/__main__.py','jlang/bin/jconsole','jlang/bin/libj.so',
-                  'jlang/bin/profile.ijs','jlang/system/util/boot.ijs',f'{di}/METADATA',f'{di}/WHEEL',
-                  f'{di}/entry_points.txt',f'{di}/RECORD']: assert n in names, n
-        assert not any(n.startswith('j9.7/') for n in names)
-        jc = z.getinfo('jlang/bin/jconsole')
-        assert jc.external_attr>>16 & 0o111, 'jconsole must be executable'
-        assert jc.create_system==3
-        assert f'Tag: py3-none-manylinux_2_34_x86_64' in z.read(f'{di}/WHEEL').decode()
-        md = z.read(f'{di}/METADATA').decode()
-        assert 'Name: jlanguage' in md and f'Version: {mw.JVER}' in md
-        assert 'Home-page: https://github.com/AnswerDotAI/jlanguage' in md
-        assert 'Project-URL: Documentation, https://code.jsoftware.com/wiki' in md
-        assert 'Project-URL: Source, https://github.com/AnswerDotAI/jlanguage' in md
-        assert 'jconsole = jlang:main' in z.read(f'{di}/entry_points.txt').decode()
-        init = z.read('jlang/__init__.py').decode()
-        assert mw.JVER in init and 'def main' in init
-        record = z.read(f'{di}/RECORD').decode()
-        assert 'jlang/bin/jconsole,sha256=' in record
+
+def test_bundled_wheels(tmp_path):
+    wrapper = Path(ProjectBuilder(fetch_j.ROOT).build('wheel', str(tmp_path)))
+    for suffix,(plat,_) in fetch_j.PLATFORMS.items():
+        archive = fetch_j.fetch(f'j{fetch_j.JVER}_{suffix}')
+        wheel = make_wheels.build_wheel(wrapper, archive, plat, tmp_path)
+        with WheelFile(wheel) as whl:
+            names = whl.namelist()
+            assert 'jlang/_engine.py' in names and 'jlang/core.py' in names
+            assert not any(n.startswith('jlang/_core.') for n in names)
+            metadata = message_from_bytes(whl.read(next(n for n in names if n.endswith('.dist-info/METADATA'))))
+            deps = metadata.get_all('Requires-Dist')
+            assert 'fastcore' in deps and 'kernmini>=0.1.19' in deps
+            assert metadata['Requires-Python'] == '>=3.11'
+            assert not {'python', 'kernel'}.intersection(metadata.get_all('Provides-Extra'))
+            assert f'Tag: py3-none-{plat}' in whl.read(next(n for n in names if n.endswith('.dist-info/WHEEL'))).decode()
+            assert b'Root-Is-Purelib: false' in whl.read(next(n for n in names if n.endswith('.dist-info/WHEEL')))
+            for rel,mode,data in fetch_j.archive_files(archive):
+                if rel.startswith('bin/') and ('jconsole' in rel or rel.endswith(('.dll', '.so', '.dylib', 'profile.ijs'))):
+                    assert whl.read(f'jlang/j/{rel}') == data
+                    assert (whl.getinfo(f'jlang/j/{rel}').external_attr>>16)&0o777 == mode
+            spec = next(n for n in names if n.endswith('/share/jupyter/kernels/j/kernel.json'))
+            assert b'"interrupt_mode": "message"' in whl.read(spec)

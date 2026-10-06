@@ -1,0 +1,6 @@
+{
+  "argv": ["python", "-m", "jlang.kernel", "{connection_file}"],
+  "display_name": "J",
+  "language": "J",
+  "interrupt_mode": "message"
+}
